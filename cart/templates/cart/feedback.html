@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="p-3">
+  <div class="container">
+    <div class="row mt-3">
+      <div class="col mx-auto mb-3">
+        <h2>Checkout Feedback</h2>
+        <hr />
+        <p class="text-muted">Here are all the feedback statements from our customers about their checkout experience.</p>
+        
+        {% if template_data.feedbacks %}
+          <div class="row">
+            {% for feedback in template_data.feedbacks %}
+            <div class="col-md-6 col-lg-4 mb-4">
+              <div class="card h-100">
+                <div class="card-body">
+                  <h6 class="card-title">
+                    {% if feedback.name %}
+                      {{ feedback.name }}
+                    {% else %}
+                      <span class="text-muted">Anonymous</span>
+                    {% endif %}
+                  </h6>
+                  <p class="card-text">{{ feedback.feedback_text }}</p>
+                  <small class="text-muted">
+                    <i class="fas fa-clock me-1"></i>
+                    {{ feedback.date|date:"M d, Y H:i" }}
+                    {% if feedback.order %}
+                      <br><i class="fas fa-receipt me-1"></i>
+                      Order #{{ feedback.order.id }}
+                    {% endif %}
+                  </small>
+                </div>
+              </div>
+            </div>
+            {% endfor %}
+          </div>
+        {% else %}
+          <div class="text-center py-5">
+            <i class="fas fa-comments fa-3x text-muted mb-3"></i>
+            <h4 class="text-muted">No feedback yet</h4>
+            <p class="text-muted">Be the first to share your checkout experience!</p>
+            <a href="{% url 'movies.index' %}" class="btn btn-primary">Shop Now</a>
+          </div>
+        {% endif %}
+        
+        <div class="mt-4">
+          <a href="{% url 'movies.index' %}" class="btn btn-outline-primary">Back to Movies</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock content %}

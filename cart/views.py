@@ -2,8 +2,11 @@ from django.shortcuts import render
 from django.shortcuts import get_object_or_404, redirect
 from movies.models import Movie
 from .utils import calculate_cart_total
-from .models import Order, Item
+from .models import Order, Item, CheckoutFeedback
 from django.contrib.auth.decorators import login_required
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+import json
 
 def index(request):
     cart_total = 0
@@ -59,4 +62,37 @@ def purchase(request):
     template_data = {}
     template_data['title'] = 'Purchase confirmation'
     template_data['order_id'] = order.id
+    template_data['order'] = order
     return render(request, 'cart/purchase.html', {'template_data': template_data})
+
+@csrf_exempt
+def submit_feedback(request):
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+            name = data.get('name', '').strip()
+            feedback_text = data.get('feedback_text', '').strip()
+            order_id = data.get('order_id')
+            
+            if not feedback_text:
+                return JsonResponse({'success': False, 'error': 'Feedback text is required'})
+            
+            feedback = CheckoutFeedback()
+            feedback.name = name if name else None
+            feedback.feedback_text = feedback_text
+            if order_id:
+                feedback.order = get_object_or_404(Order, id=order_id)
+            feedback.save()
+            
+            return JsonResponse({'success': True})
+        except Exception as e:
+            return JsonResponse({'success': False, 'error': str(e)})
+    
+    return JsonResponse({'success': False, 'error': 'Invalid request method'})
+
+def view_feedback(request):
+    feedbacks = CheckoutFeedback.objects.all().order_by('-date')
+    template_data = {}
+    template_data['title'] = 'Checkout Feedback'
+    template_data['feedbacks'] = feedbacks
+    return render(request, 'cart/feedback.html', {'template_data': template_data})
