@@ -1,14 +1,40 @@
-{% extends 'base.html' %}
+{% extends "base.html" %}
 {% block content %}
-<div class="p-3">
-  <div class="container">
-    <div class="row mt-3">
-      <div class="col mx-auto mb-3">
-        <h2>Purchase Completed</h2>
-        <hr />
-        <p>Congratulations, purchase completed. Order number is: <b>#{{ template_data.order_id }}</b></p>
+<div class="container py-4 text-white">
+  <h2>Purchase Complete</h2>
+  <p>Thank you for your order! Your order ID is <strong>#{{ template_data.order_id }}</strong>.</p>
+
+  <!-- Button to open survey -->
+  <button type="button" class="btn btn-light mt-3" data-bs-toggle="modal" data-bs-target="#feedbackModal">
+    Share Feedback
+  </button>
+  <a href="{% url 'cart:cart.view_feedback' %}" class="btn btn-outline-light mt-3">View All Feedback</a>
+</div>
+
+<!-- Feedback Modal -->
+<div class="modal fade" id="feedbackModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog">
+    <form method="post" action="{% url 'cart:cart.submit_feedback' %}" class="modal-content bg-dark text-white">
+      {% csrf_token %}
+      <div class="modal-header">
+        <h5 class="modal-title">Checkout Feedback</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
-    </div>
+      <div class="modal-body">
+        <div class="mb-3">
+          <label for="id_name" class="form-label">Name (optional)</label>
+          <input type="text" name="name" id="id_name" class="form-control">
+        </div>
+        <div class="mb-3">
+          <label for="id_comment" class="form-label">Your Thoughts</label>
+          <textarea name="comment" id="id_comment" rows="3" class="form-control" required></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="submit" class="btn btn-light">Submit</button>
+        <button type="button" class="btn btn-outline-light" data-bs-dismiss="modal">Cancel</button>
+      </div>
+    </form>
   </div>
 </div>
-{% endblock content %}
+{% endblock %}

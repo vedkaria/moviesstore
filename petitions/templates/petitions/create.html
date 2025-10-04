@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="p-3">
+  <div class="container">
+    <h2>Create Movie Petition</h2>
+    <hr />
+    
+    <form method="post">
+      {% csrf_token %}
+      <div class="mb-3">
+        <label>Movie Title</label>
+        <input type="text" class="form-control" name="title" required>
+      </div>
+      <div class="mb-3">
+        <label>Description</label>
+        <textarea class="form-control" name="description" rows="3" required></textarea>
+      </div>
+      <button type="submit" class="btn btn-primary">Create</button>
+      <a href="{% url 'petitions.index' %}" class="btn btn-secondary">Cancel</a>
+    </form>
+  </div>
+</div>
+{% endblock content %}

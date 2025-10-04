@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="p-3">
+  <div class="container">
+    <div class="row mt-3">
+      <div class="col mx-auto mb-3">
+        <h2>Checkout Feedback</h2>
+        <hr />
+        <p>Here's what our customers are saying about their checkout experience:</p>
+      </div>
+    </div>
+    
+    {% if template_data.feedbacks %}
+      <div class="row">
+        {% for feedback in template_data.feedbacks %}
+        <div class="col-md-6 mb-3">
+          <div class="card">
+            <div class="card-body">
+              <h6 class="card-title">
+                {% if feedback.name %}
+                  {{ feedback.name }}
+                {% else %}
+                  Anonymous
+                {% endif %}
+                <small class="text-muted">- {{ feedback.date|date:"M d, Y H:i" }}</small>
+              </h6>
+              <p class="card-text">{{ feedback.feedback_text }}</p>
+              {% if feedback.order %}
+                <small class="text-muted">Order #{{ feedback.order.id }}</small>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+    {% else %}
+      <div class="row">
+        <div class="col mx-auto text-center">
+          <p class="text-muted">No feedback has been submitted yet. Be the first to share your thoughts!</p>
+        </div>
+      </div>
+    {% endif %}
+    
+    <div class="row mt-4">
+      <div class="col mx-auto text-center">
+        <a href="{% url 'movies.index' %}" class="btn btn-primary me-2">Continue Shopping</a>
+        <a href="{% url 'cart:cart.index' %}" class="btn btn-outline-secondary">Back to Cart</a>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock content %}
